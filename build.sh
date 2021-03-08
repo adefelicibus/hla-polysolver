@@ -1,6 +1,9 @@
 echo "Running the build.sh Script"
 echo "Adding perl scripts"
-# cpanm -i Math::BaseCalc
+cpanm -i Math::BaseCalc
+cpanm -i Parallel::ForkManager
+cpanm -i List::MoreUtils
+
 mkdir -p $PREFIX/bin/
 mkdir -p $PREFIX/jar/
 mkdir -p $PREFIX/share/

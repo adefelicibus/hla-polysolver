@@ -1,5 +1,5 @@
 channels:
   - defaults
+  - conda-forge
   - bioconda
   - vacation
-  - conda-forge
