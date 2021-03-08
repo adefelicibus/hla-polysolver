@@ -25,25 +25,27 @@ requirements:
     - perl-list-moreutils
     - perl-list-util
     - perl-posix               
-    - gcc_linux-64
-    - novoalign 3.09.04
+    # - gcc_linux-64
+    - novoalign 3.09*
     - zlib 
+    - libgcc
   build:
     - perl 5.22.*
     - perl-app-cpanminus
-    - novoalign
-    - gcc_linux-64
+    - novoalign 3.09*
+    # - gcc_linux-64
     - make
     - zlib
   run:
     - strelka
-    - gcc_linux-64
+    # - gcc_linux-64
+    - libgcc
     - zlib
     - make
     - python 2.7.*
     - perl 5.22.*
     - samtools <=0.1.18
-    - novoalign 3.09.04
+    - novoalign 3.09*
     - java-jdk 7.*
     - perl-posix
     - perl-bioperl
@@ -52,19 +54,19 @@ requirements:
     - perl-parallel-forkmanager
     - perl-data-dumper
     - perl-array-utils
-    - perl-vcftools-vcf <=0.953
+    - perl-vcftools-vcf
     - perl-math-basecalc
     - perl-bio-samtools
 
-test:
-  source_files:
-    - test/test.bam
-    - test/test.bam.bai
-    - test/test.tumor.bam
-    - test/test.tumor.bam.bai
-    - test/orig.winners.hla.txt
-    - test/orig.indiv.mutect.filtered.nonsyn.annotated
-    - test/orig.call_stats.hla_b_39_01_01_02l.out
+# test:
+#   source_files:
+#     - test/test.bam
+#     - test/test.bam.bai
+#     - test/test.tumor.bam
+#     - test/test.tumor.bam.bai
+#     - test/orig.winners.hla.txt
+#     - test/orig.indiv.mutect.filtered.nonsyn.annotated
+#     - test/orig.call_stats.hla_b_39_01_01_02l.out
 
 about:
   home: https://github.com/adefelicibus/hla-polysolver
