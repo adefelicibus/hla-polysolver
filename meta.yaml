@@ -1,30 +1,49 @@
+{% set name = "hla-polysolver" %}
+{% set version = "1.0.0" %}
+
 package:
-  name: hla-polysolver
-  version: "1.0.0"
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
 
 source:
-  git_rev: master
-  git_url: https://github.com/jason-weirather/hla-polysolver.git
+  git_rev: update-polysolver
+  git_url: https://github.com/adefelicibus/hla-polysolver.git
 
 build:
   number: 21
 
 requirements:
+  host:                                                   
+    - perl 5.22.*
+    - perl-math-basecalc
+    - perl-array-utils
+    - perl-vcftools-vcf
+    - perl-data-dumper
+    - perl-bio-samtools
+    - perl-bioperl
+    - perl-parallel-forkmanager
+    - perl-list-moreutils
+    - perl-list-util
+    - perl-posix               
+    - gcc_linux-64
+    - novoalign 3.09.04
+    - zlib 
   build:
     - perl 5.22.*
     - perl-app-cpanminus
     - novoalign
-    - gcc
+    - gcc_linux-64
     - make
     - zlib
   run:
+    - strelka
+    - gcc_linux-64
     - zlib
     - make
     - python 2.7.*
     - perl 5.22.*
     - samtools <=0.1.18
-    - novoalign
-    - mutect <=1.1.6
+    - novoalign 3.09.04
     - java-jdk 7.*
     - perl-posix
     - perl-bioperl
@@ -32,10 +51,29 @@ requirements:
     - perl-list-moreutils
     - perl-parallel-forkmanager
     - perl-data-dumper
-    - perl-bio-db-sam
     - perl-array-utils
     - perl-vcftools-vcf <=0.953
+    - perl-math-basecalc
+    - perl-bio-samtools
+
+test:
+  source_files:
+    - test/test.bam
+    - test/test.bam.bai
+    - test/test.tumor.bam
+    - test/test.tumor.bam.bai
+    - test/orig.winners.hla.txt
+    - test/orig.indiv.mutect.filtered.nonsyn.annotated
+    - test/orig.call_stats.hla_b_39_01_01_02l.out
+
 about:
-  home: https://github.com/jason-weirather/hla-polysolver
+  home: https://github.com/adefelicibus/hla-polysolver
   license: BSD
   license_file: LICENSE
+  summary: A flow of sequencing data analysis pipeline to type all of the HLA genes in IMGT/HLA database using capture sequenced data or WGS data with high accuracy.
+  doc_url: http://archive.broadinstitute.org/cancer/cga/polysolver
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - adefelicibus

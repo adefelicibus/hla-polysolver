@@ -9,7 +9,7 @@ if [ $# -ne 7 ]; then
 	echo "	-bam: path to the BAM file to be used for HLA typing"
 	echo "	-race: ethnicity of the individual (Caucasian, Black, Asian or Unknown)"
 	echo "	-includeFreq: flag indicating whether population-level allele frequencies should be used as priors (0 or 1)"
-	echo "	-build: reference genome used in the BAM file (hg18 or hg19)"
+	echo "	-build: reference genome used in the BAM file (hg18, hg19 or hg38)"
 	echo "	-format: fastq format (STDFQ, ILMFQ, ILM1.8 or SLXFQ; see Novoalign documentation)"
 	echo "	-insertCalc: flag indicating whether empirical insert size distribution should be used in the model (0 or 1)"
 	echo "	-outDir: output directory"
@@ -31,6 +31,8 @@ outDir=$7
 
 ids=$DATA_DIR/ids
 tag_file=$DATA_DIR/abc_v14.uniq
+
+set -e 
 
 if [ ! -d $outDir ]; then
 	mkdir $outDir

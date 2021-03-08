@@ -1,6 +1,6 @@
 echo "Running the build.sh Script"
 echo "Adding perl scripts"
-cpanm -i Math::BaseCalc
+# cpanm -i Math::BaseCalc
 mkdir -p $PREFIX/bin/
 mkdir -p $PREFIX/jar/
 mkdir -p $PREFIX/share/
@@ -16,11 +16,11 @@ echo "Put scripts into the polysolver build"
 cp $SRC_DIR/scripts/* $PREFIX/scripts/
 echo "Build strelka"
 #echo "start building vcftools"
-cd $SRC_DIR/include/ && \
-  tar -xzf strelka-upstream-v1.0.11.tar.gz && \
-  cd strelka-upstream-v1.0.11 && \
-  ./configure --prefix=$PREFIX/share/strelka && \
-  make
+# cd $SRC_DIR/include/ && \
+#   tar -xzf strelka-upstream-v1.0.11.tar.gz && \
+#   cd strelka-upstream-v1.0.11 && \
+#   ./configure --prefix=$PREFIX/share/strelka && \
+#   make
 #  cd $SRC_DIR/include/strelka-upstream-v1.0.11/redist/vcftools-r837 && \
 #  make
 #echo "build main part"
