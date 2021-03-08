@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 
-# usage: ./annotate_hla_mutect.pl HNSC-TCGA-BA-6873 HNSC-TCGA-BA-6873 /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/a_complete.3100.new.eb.fasta /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/b_complete.3100.new.eb.fasta /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/c_complete.3100.new.eb.fasta $PSHOME
-
+# usage: ./annotate_hla_mutect.pl HNSC-TCGA-BA-6873 HNSC-TCGA-BA-6873 /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/a_complete.3100.new.eb.fasta /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/b_complete.3100.new.eb.fasta /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/c_complete.3100.new.eb.fasta $PSHOME outDir
 
 use POSIX;
 
@@ -11,17 +10,27 @@ $aFile = $ARGV[2];
 $bFile = $ARGV[3];
 $cFile = $ARGV[4];
 $PSHOME = $ARGV[5];
+$outDir = $ARGV[6];
+
+print "indiv=$indiv\n";
+print "dir=$dir\n";
+print "aFile=$aFile\n";
+print "bFile=$bFile\n";
+print "cFile=$cFile\n";
+print "PSHOME=$PSHOME\n";
+print "outDir=$outDir\n";
 
 $lib = $PSHOME."/scripts/common_functions_typing.pl";
 require $lib;
 $lib1 = $PSHOME."/scripts/common_functions_hla.pl";
 require $lib1;
 
-$outFile = $dir."/".$indiv.".mutect.unfiltered.annotated";
+$outFile = $outDir."/".$indiv.".mutect.unfiltered.annotated";
+
+print "outFile=$outFile\n";
 
 open INFILE, $inFile;
 open OUTFILE, ">$outFile" || die "Cannot open $outFile\n";
-
 
 ($ref1,$ref2,$ref3) = @{get_seq_start_codon_splice_sites($aFile)};
 %aH1 = %{$ref1};
@@ -46,8 +55,9 @@ open OUTFILE, ">$outFile" || die "Cannot open $outFile\n";
 
 @t = `ls $dir/call_stats*`;
 $csFile = $t[0];
+
 chomp($csFile);
-open CSFILE, $csFile || die "Can not open $csFile\n";
+open CSFILE, $csFile || die "Can not open csFile=$csFile\n";
 while(($header = <CSFILE>) !~ /^contig/){}
 chomp($header);
 close CSFILE;

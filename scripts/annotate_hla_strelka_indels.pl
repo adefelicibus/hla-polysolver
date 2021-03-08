@@ -2,7 +2,6 @@
 
 # usage: ./annotate_hla_strelka_indels.pl LUAD-TCGA-95-7562 LUAD-TCGA-95-7562 /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/a_complete.3100.new.eb.fasta /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/b_complete.3100.new.eb.fasta /cga/wu/sachet/hla/hla_caller/capture/polysolver_based_muts_080814/data/c_complete.3100.new.eb.fasta $PSHOME
 
-
 use POSIX;
 
 $indiv = $ARGV[0];
@@ -11,13 +10,14 @@ $aFile = $ARGV[2];
 $bFile = $ARGV[3];
 $cFile = $ARGV[4];
 $PSHOME = $ARGV[5];
+$outDir = $ARGV[6];
 
 $lib = $PSHOME."/scripts/common_functions_typing.pl";
 require $lib;
 $lib1 = $PSHOME."/scripts/common_functions_hla.pl";
 require $lib1;
 
-$outFile = $dir."/".$indiv.".strelka_indels.unfiltered.annotated";
+$outFile = $outDir."/".$indiv.".strelka_indels.unfiltered.annotated";
 
 open INFILE, $inFile;
 open OUTFILE, ">$outFile" || die "Cannot open $outFile\n";

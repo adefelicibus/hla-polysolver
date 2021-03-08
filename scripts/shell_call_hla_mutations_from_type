@@ -10,7 +10,7 @@ if [ $# -ne 6 ]; then
         echo "  -normal_bam_hla: path to the normal BAM file"
         echo "  -tumor_bam_hla: path to the tumor BAM file"
         echo "  -hla: inferred HLA allele file from POLYSOLVER (winners.hla.txt or winners.hla.nofreq.txt)"
-        echo "  -build: reference genome used in the BAM file (hg18 or hg19)"
+        echo "  -build: reference genome used in the BAM file (hg18, hg19 or hg38)"
 	echo "  -format: fastq format (STDFQ, ILMFQ, ILM1.8 or SLXFQ; see Novoalign documentation)"
 	echo "  -outDir: output directory"
         exit 127
@@ -31,6 +31,43 @@ build=$4
 format=$5
 outDir=$6
 tag_file=$DATA_DIR/abc_38_both_pm_update.uniq
+
+# check if the normal bam is paired end
+
+samtools view $normal_bam_hla | head -10000 | cut -f2 > temp.normal.checkpairs
+
+$DIR/../scripts/check_bam_flag_pairs.pl temp.normal. checkpairs 0 1
+
+status=`tail -1 check.status.out.txt | cut -f2`
+
+echo "check_bam_flag_pairs: normal status = $status"
+
+if [ $status == 0 ]; then
+        echo "normal_bam_hla=$normal_bam_hla file is not paired"
+        exit 1
+fi
+
+rm -f temp.normal.checkpairs
+rm -f check.status.out.txt
+
+
+# check if the tumor bam is paired end
+
+samtools view $tumor_bam_hla | head -10000 | cut -f2 > temp.tumor.checkpairs
+
+$DIR/../scripts/check_bam_flag_pairs.pl temp.tumor.checkpairs 0 1
+
+status=`tail -1 check.status.out.txt | cut -f2`
+
+echo "check_bam_flag_pairs: tumor status = $status"
+
+if [ $status == 0 ]; then
+        echo "tumor_bam_hla=$tumor_bam_hla file is not paired"
+        exit 1
+fi
+
+rm -f temp.tumor.checkpairs
+#rm -f check.status.out.txt
 
 ######################################### align normal_bam_hla #####################################################
 
@@ -56,7 +93,17 @@ echo -n -e "getting chr6 region\n"
 
 samtools view -H $normal_bam_hla > $outDir/chr6region.sam
 
-if [ $build == "hg19" ]; then
+if [ $build == "hg38" ]; then
+
+        echo -n -e "build=hg38\n"
+
+        samtools view $normal_bam_hla 6:29941260-29945884 >> $outDir/chr6region.sam
+
+        samtools view $normal_bam_hla 6:31353872-31357187 >> $outDir/chr6region.sam
+
+        samtools view $normal_bam_hla 6:31268749-31272105 >> $outDir/chr6region.sam
+
+elif [ $build == "hg19" ]; then
 
         echo -n -e "build=hg19\n"
 
@@ -67,7 +114,6 @@ if [ $build == "hg19" ]; then
         samtools view $normal_bam_hla 6:31236526-31239869 >> $outDir/chr6region.sam
 
 else
-
         echo -n -e "build=hg18\n"
 
         samtools view $normal_bam_hla chr6:30016016-30022640 >> $outDir/chr6region.sam
@@ -153,7 +199,17 @@ echo -n -e "getting chr6 region\n"
 
 samtools view -H $tumor_bam_hla > $outDir/chr6region.sam
 
-if [ $build == "hg19" ]; then
+if [ $build == "hg38" ]; then
+
+        echo -n -e "build=hg38\n"
+
+        samtools view $tumor_bam_hla 6:29941260-29945884 >> $outDir/chr6region.sam
+
+        samtools view $tumor_bam_hla 6:31353872-31357187 >> $outDir/chr6region.sam
+
+        samtools view $tumor_bam_hla 6:31268749-31272105 >> $outDir/chr6region.sam
+
+elif [ $build == "hg19" ]; then
 
         echo -n -e "build=hg19\n"
 
@@ -263,9 +319,9 @@ for allele in $var; do
 
         echo -n -e "creating type bams for $allele\n"
 
-        more $DATA_DIR/novoalign_complete_header.sam | grep "\@HD" > $outDir/temp.$allele.tumor.sam
-        more $DATA_DIR/novoalign_complete_header.sam | grep "\@PG" >> $outDir/temp.$allele.tumor.sam
-        more $DATA_DIR/novoalign_complete_header.sam | grep -P "$allele\t" >> $outDir/temp.$allele.tumor.sam
+        cat $DATA_DIR/novoalign_complete_header.sam | grep "\@HD" > $outDir/temp.$allele.tumor.sam
+        cat $DATA_DIR/novoalign_complete_header.sam | grep "\@PG" >> $outDir/temp.$allele.tumor.sam
+        cat $DATA_DIR/novoalign_complete_header.sam | grep -P "$allele\t" >> $outDir/temp.$allele.tumor.sam
         echo -n -e "@RG\tID:foo\tPL:foo\tPU:foo\tLB:foo\tSM:foo\n" >> $outDir/temp.$allele.tumor.sam
         samtools view $tumorBam | grep -P "\t$allele\t" | sort -k1 > $outDir/temp.$allele.tumor
         $DIR/../scripts/keep_only_read_pairs.pl $outDir/temp.$allele.tumor $outDir/temp.$allele.tumor2
@@ -275,9 +331,9 @@ for allele in $var; do
         samtools index $outDir/type.$allele.tumor.bam
         rm -rf $outDir/temp.$allele.tumor.*
 
-        more $DATA_DIR/novoalign_complete_header.sam | grep "\@HD" > $outDir/temp.$allele.sam
-        more $DATA_DIR/novoalign_complete_header.sam | grep "\@PG" >> $outDir/temp.$allele.sam
-        more $DATA_DIR/novoalign_complete_header.sam | grep -P "$allele\t" >> $outDir/temp.$allele.sam
+        cat $DATA_DIR/novoalign_complete_header.sam | grep "\@HD" > $outDir/temp.$allele.sam
+        cat $DATA_DIR/novoalign_complete_header.sam | grep "\@PG" >> $outDir/temp.$allele.sam
+        cat $DATA_DIR/novoalign_complete_header.sam | grep -P "$allele\t" >> $outDir/temp.$allele.sam
         echo -n -e "@RG\tID:foo\tPL:foo\tPU:foo\tLB:foo\tSM:foo\n" >> $outDir/temp.$allele.sam
         samtools view $normalBam | grep -P "\t$allele\t" | sort -k1 > $outDir/temp.$allele
         $DIR/../scripts/keep_only_read_pairs.pl $outDir/temp.$allele $outDir/temp.$allele.2
@@ -302,11 +358,14 @@ for allele in $var; do
         # run strelka
         echo -n -e "strelka: $allele\n"
         $STRELKA_DIR/bin/configureStrelkaWorkflow.pl --normal=$outDir/type.$allele.bam --tumor=$outDir/type.$allele.tumor.bam --ref=$DATA_DIR/abc_complete.fasta --config=$STRELKA_DIR/etc/strelka_config_eland_default.ini --output-dir=$outDir/strelka.$allele
-                make -C $outDir/strelka.$allele
-                cp $outDir/strelka.$allele/results/all.somatic.indels.vcf $outDir/$allele.all.somatic.indels.vcf
+        make -C $outDir/strelka.$allele
+        cp $outDir/strelka.$allele/results/all.somatic.indels.vcf $outDir/$allele.all.somatic.indels.vcf
 
 done
 
+mkdir hla_type_bams
+cp $outDir/type* hla_type_bams
+tar -czvf hla_type_bams.tar.gz hla_type_bams
 
 echo -n -e "cleanup\n"
 
@@ -317,6 +376,17 @@ rm -rf $outDir/nv.complete.chr6region.R0k6.bam.* &
 rm -rf $outDir/nv.complete.chr6region.tumor.R0k6.bam.* &
 rm -rf $outDir/nv.complete.chr6region.R0k6.csorted.nodup.RG.bam.* &
 rm -rf $outDir/nv.complete.chr6region.tumor.R0k6.csorted.nodup.RG.bam.* &
-rm -rf $outDir/strelka* $outDir/type* $outDir/cov* $outDir/nv* &
+rm -rf $outDir/strelka* $outDir/cov* $outDir/nv* &
 rm -rf $outDir/temp* $outDir/tag* $outDir/chr6* $outDir/merged* &
 rm -rf $outDir/hla.output* &
+
+mkdir hla_mut
+cp $outDir/* hla_mut/
+tar -czvf hla_mut.tar.gz hla_mut
+
+mkdir hla_type_bams
+cp $outDir/type* hla_type_bams
+tar -czvf hla_type_bams.tar.gz hla_type_bams
+
+rm -rf $outDir/type*
+rm -rf hla_type_bams
