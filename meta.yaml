@@ -14,7 +14,7 @@ build:
 
 requirements:
   host:                                                   
-    - perl
+    - perl 5.26.*
     - perl-math-basecalc
     - perl-array-utils
     - perl-vcftools-vcf
@@ -30,7 +30,7 @@ requirements:
     - zlib 
     # - libgcc
   build:
-    - perl
+    - perl 5.26.*
     - perl-app-cpanminus
     - novoalign 3.09*
     - gcc_linux-64
@@ -42,8 +42,8 @@ requirements:
     # - libgcc
     - zlib
     - make
-    - python 2.7.*
-    - perl
+    - python
+    - perl 5.26.*
     - samtools <=0.1.18
     - novoalign 3.09*
     - java-jdk 7.*
