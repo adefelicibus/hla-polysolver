@@ -1,8 +1,12 @@
 echo "Running the build.sh Script"
 echo "Adding perl scripts"
-cpanm -i Math::BaseCalc
-cpanm -i Parallel::ForkManager
-cpanm -i List::MoreUtils
+# cpanm -i Math::BaseCalc
+# cpanm -i Parallel::ForkManager
+# cpanm -i List::MoreUtils
+
+env PERL5LIB="" PERL_LOCAL_LIB_ROOT="" PERL_MM_OPT="" PERL_MB_OPT="" $CONDA_PREFIX/bin/cpanm -i Math::BaseCalc
+env PERL5LIB="" PERL_LOCAL_LIB_ROOT="" PERL_MM_OPT="" PERL_MB_OPT="" $CONDA_PREFIX/bin/cpanm -i Parallel::ForkManager
+env PERL5LIB="" PERL_LOCAL_LIB_ROOT="" PERL_MM_OPT="" PERL_MB_OPT="" $CONDA_PREFIX/bin/cpanm -i List::MoreUtils
 
 mkdir -p $PREFIX/bin/
 mkdir -p $PREFIX/jar/
